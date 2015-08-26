@@ -1,0 +1,168 @@
+
+#bigcircle{
+  width: 400px;
+  height: 400px;
+  position:relative;
+  margin: 0 auto;
+  border: 25px solid #252525;
+  border-radius: 50%;
+  overflow:hidden;
+  
+  
+-webkit-box-shadow: 0px 0px 11px 3px rgba(50, 50, 50, 1);
+-moz-box-shadow:    0px 0px 11px 3px rgba(50, 50, 50, 1);
+box-shadow:         0px 0px 11px 3px rgba(50, 50, 50, 1);
+}
+
+.circlecontainer{
+  width:100%;
+  height:100%;
+  position:absolute;
+  border: 10px solid #252525;
+  box-sizing: border-box;
+  z-index: 99999;
+}
+
+#topleft {
+  background-color: #19830f;
+  top: -50%;
+  left: -50%;
+}
+#topleft.on {
+  background-color:#29ea18;
+}
+
+#topright {
+  background-color: #920a0a;
+  top: -50%;
+  left: 50%;
+}
+#topright.on {
+  background-color: #e71010;
+}
+#bottomleft {
+  background-color: #B29600;
+  top: 50%;
+  left: -50%;
+}
+#bottomleft.on {
+  background-color: #FFD700;
+}
+#bottomright {
+  background-color: #000099;
+  top: 50%;
+  left: 50%;
+}
+#bottomright.on {
+  background-color: #0000FF;
+}
+#center {
+  background-color: white;
+  border: 10px solid #222;
+  border-radius:50%;
+  width:50%;
+  height:50%;
+  top: 25%;
+  left: 25%;
+  text-align:center;
+  margin:0 auto;
+}
+
+#center h1{ 
+  margin:0;
+  padding:0;
+  margin-top:10px;
+}
+.buttons1 {
+  
+}
+.buttons1 h3 {
+  font-size: 0.8em;
+}
+
+.btn {
+  width: 50px;
+  height:auto;
+  display: inline-block;
+}
+.round-btn {
+  margin:0 auto;
+  width: 20px;
+  height: 20px;
+  border: 5px solid #333;
+  border-radius: 50%;
+}
+#display {
+  border: 2px solid #333;
+  border-radius: 20%;
+  background-color: #361919;
+  color: #19ff19;
+}
+
+#strict-light {
+  position:relative;
+  top: -5px;
+  background-color:black;
+  border:2px solid black;
+  width: 5px;
+  height: 5px;
+}
+#strict-light.on {
+  background-color:red;
+}
+
+#start{
+  background-color:red;
+}
+
+#count {
+  background-color:yellow;
+}
+
+.buttons2,
+.buttons2 div{
+  display:inline-block;
+  margin:0 auto;
+}
+#slider {
+  width: 40px;
+  height: 20px;
+  border: 2px solid black;
+  background-color: #222;
+  position:relative;
+}
+#switchbtn {
+  width: 20px;
+  height: 20px;
+  background-color: #307dd4;
+  border:2px solid #1f66b6;
+  border-radius: 5px;
+  box-sizing:border-box;
+  position:absolute;
+  top:0px;
+  left:0px;
+}
+#switchbtn.on{
+  left:20px;
+}
+.buttons2 h3 {
+  font-size: 0.8em;
+}
+
+.inline {display:inline;}
+.small {
+  font-size: 0.5em;
+  margin-top: -40px;
+}
+
+
+
+
+
+body {
+ background: #ffffff url('') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}

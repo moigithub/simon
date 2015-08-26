@@ -67,6 +67,9 @@ box-shadow:         0px 0px 11px 3px rgba(50, 50, 50, 1);
   text-align:center;
   margin:0 auto;
 }
+#center.on {
+  background-color: purple;
+}
 
 #center h1{ 
   margin:0;

@@ -1,3 +1,4 @@
+"use strict";
 var onoff=false;
 var strict=false;
 var start = false;
@@ -5,10 +6,10 @@ var level = "--";
 var sequence = [];
 var userSequence=[];
 var playTime = false; // user turn
-var usetWaitTimer = 2000; // 2 seconds for each sequence value 2*sequence.length
+var usetWaitTimer = 1500; // 2 seconds for each sequence value 2*sequence.length
 var errorDelay = 2000;
 var userTimerCtrl;
-var clearColorDelay=800; // how much time wait to clear colors (1 second)
+var clearColorDelay=600; // how much time wait to clear colors (1 second)
 
 
 function playsound(sound){
@@ -44,9 +45,9 @@ function showLevel(lvl){
 }
 
 function showSequence(index, max){
+  if(!start) return;
   if(index>=max) return;
-  
-  //console.log("showing seq",index);
+  console.log("showing seq",playTime);
   switch (sequence[index]){
     case 0:
       $("#topleft").addClass("on");
@@ -63,9 +64,10 @@ function showSequence(index, max){
   };
 
   // play sound
-  playsound("audio");
+  playsound("audio"+sequence[index]);
 
   //clear on class
+  console.log("showSeq timeout", clearColorDelay);
   setTimeout(function(){
     //console.log("clear color");
     $("#topleft").removeClass("on");
@@ -73,6 +75,7 @@ function showSequence(index, max){
     $("#bottomleft").removeClass("on");
     $("#bottomright").removeClass("on");
 
+    console.log("showSeq timeout pause", clearColorDelay);
     setTimeout(function(){
       showSequence(index+1, max);
     },clearColorDelay);
@@ -86,62 +89,86 @@ function addData(){
   console.log("sequence",sequence);
 }
 
+function initialize(){
+  level = "--";
+  userSequence = [];
+  sequence = [];
+  strict = false;
+  start = false;
+  $("#strict-light").removeClass("on");
+  $("#center").removeClass("on");
+  showLevel(level);
+}
+
+
 function game(add){
+  playTime = false;
+  console.log("game ptime",playTime);
   if(!start) return;
-  playTime=false;
+  
   showLevel(level);
   if(add) {
     addData();
   }
-  
   showSequence(0, sequence.length);
-  // user turn
-  playTime=true;
-  userSequence=[];
-  console.log("ptime",playTime);
+  
+  //compu playing show indicator
+  $("#center").addClass("on");
+  
+  // wait will showSequence finish.. 
+  setTimeout(function(){
+    $("#center").removeClass("on");
+    playTime=true;
+    userSequence=[];
+    console.log("game p2time",playTime);
 
+    // wait for user input
+    console.log("waiting for user play", usetWaitTimer*(sequence.length+1));
+    userTimerCtrl = setTimeout(function(){
+      // check if user input is correct
+      console.log(JSON.stringify(sequence));
+      console.log(JSON.stringify(userSequence));
+      if (checkArray(sequence,userSequence)){
+        // both equal, next level
+        //alert("good job, next level");
+        level++;
+        game(true);// addData, showSequence, waitForInput, checkInput, repeat
+      } else {
+        // wrong input, show sequence, wait for input
+        //alert("wrong input");
+        playsound("errorsound");
+        showLevel("!!");
+
+        setTimeout(function(){
+          // if strict, re initialize all, start over newSequence
+          var startAgain=false;
+          if(strict){
+            level = "0";
+            userSequence=[];
+            sequence=[];
+            startAgain=true;
+          }
+
+          game(startAgain); //NOTaddData, showSeq, wait, check, repeat
+
+        }, errorDelay); // wait for error beep/msg finish
+
+
+      }
+
+    }, usetWaitTimer*(sequence.length+1)); //wait for user to play
+    
+  }, (clearColorDelay*2)*sequence.length); // wait for showSequence finish
+  
+  
+  // user turn
   //1. create another timer handler to wait for user input
   //2. if user input ontime and correct, clear interval and addData (repeat)
   //3. if userinput incorrect, clear interval, showsequence, and repeat from step 1.
   //4. if timer runout and userinput incomplete, clear interval, showsequence, repeat from step 1.
   
   
-  // wait for user input
-  userTimerCtrl = setTimeout(function(){
-    // check if user input is correct
-    console.log(JSON.stringify(sequence));
-    console.log(JSON.stringify(userSequence));
-    if (checkArray(sequence,userSequence)){
-      // both equal, next level
-      //alert("good job, next level");
-      level++;
-      game(true);// addData, showSequence, waitForInput, checkInput, repeat
-    } else {
-      // wrong input, show sequence, wait for input
-      //alert("wrong input");
-      playsound("errorsound");
-      showLevel("!!");
-      
-      setTimeout(function(){
-        // if strict, re initialize all, start over newSequence
-        var startAgain=false;
-        if(strict){
-          level = "0";
-          userSequence=[];
-          sequence=[];
-          startAgain=true;
-        }
-
-        game(startAgain); //NOTaddData, showSeq, wait, check, repeat
-        
-      }, errorDelay);
-
-
-    }
-    
-  }, usetWaitTimer*(sequence.length+1));
-  
-}
+}// fin game()
 
 
 ///////////////////////
@@ -154,12 +181,7 @@ $(document).ready(function(){
     $("#display").toggleClass("on");
     
     if(!onoff){
-      level = "--";
-      userSequence = [];
-      sequence = [];
-      strict = false;
-      start = false;
-      $("#strict-light").removeClass("on");
+      initialize();
 //      $("#display").addClass("on");
     }
     console.log("onoff",onoff);
@@ -184,8 +206,7 @@ $(document).ready(function(){
       sequence = [];
       game(true);
     } else {
-      level = "--";
-      
+      initialize();
       userTimerCtrl = clearTimeout(userTimerCtrl);
     }
     showLevel(level);
@@ -201,7 +222,7 @@ $(document).ready(function(){
       $(this).toggleClass("on");
       userSequence.push(0);
       //play sound
-      playsound("audio");
+      playsound("audio0");
     }
   }).mouseup(function(){
     if(playTime) {
@@ -214,7 +235,7 @@ $(document).ready(function(){
       $(this).toggleClass("on");
       userSequence.push(1);
       //play sound
-      playsound("audio");
+      playsound("audio1");
     }
   }).mouseup(function(){
     if(playTime) {
@@ -227,7 +248,7 @@ $(document).ready(function(){
       $(this).toggleClass("on");
       userSequence.push(2);
       //play sound
-      playsound("audio");
+      playsound("audio2");
     }
   }).mouseup(function(){
     if(playTime) {
@@ -240,7 +261,7 @@ $(document).ready(function(){
       $(this).toggleClass("on");
       userSequence.push(3);
       //play sound
-      playsound("audio");
+      playsound("audio3");
     }
   }).mouseup(function(){
     if(playTime) {

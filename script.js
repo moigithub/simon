@@ -4,9 +4,9 @@ var start = false;
 var level = "--";
 var sequence = [];
 var userSequence=[];
-var playTime = true; // user turn
+var playTime = false; // user turn
 var usetWaitTimer = 2000; // 2 seconds for each sequence value 2*sequence.length
-
+var errorDelay = 2000;
 var userTimerCtrl;
 var clearColorDelay=800; // how much time wait to clear colors (1 second)
 
@@ -46,7 +46,7 @@ function showLevel(lvl){
 function showSequence(index, max){
   if(index>=max) return;
   
-  console.log("showing seq",index);
+  //console.log("showing seq",index);
   switch (sequence[index]){
     case 0:
       $("#topleft").addClass("on");
@@ -67,7 +67,7 @@ function showSequence(index, max){
 
   //clear on class
   setTimeout(function(){
-    console.log("clear color");
+    //console.log("clear color");
     $("#topleft").removeClass("on");
     $("#topright").removeClass("on");
     $("#bottomleft").removeClass("on");
@@ -113,23 +113,29 @@ function game(add){
     console.log(JSON.stringify(userSequence));
     if (checkArray(sequence,userSequence)){
       // both equal, next level
-      alert("good job, next level");
+      //alert("good job, next level");
       level++;
       game(true);// addData, showSequence, waitForInput, checkInput, repeat
     } else {
       // wrong input, show sequence, wait for input
-      alert("wrong input");
-
-      // if strict, re initialize all, start over newSequence
-      var startAgain=false;
-      if(strict){
-        level = "0";
-        userSequence=[];
-        sequence=[];
-        startAgain=true;
-      }
+      //alert("wrong input");
+      playsound("errorsound");
+      showLevel("!!");
       
-      game(startAgain); //NOTaddData, showSeq, wait, check, repeat
+      setTimeout(function(){
+        // if strict, re initialize all, start over newSequence
+        var startAgain=false;
+        if(strict){
+          level = "0";
+          userSequence=[];
+          sequence=[];
+          startAgain=true;
+        }
+
+        game(startAgain); //NOTaddData, showSeq, wait, check, repeat
+        
+      }, errorDelay);
+
 
     }
     
@@ -145,11 +151,23 @@ $(document).ready(function(){
   $("#switchbtn").click(function(){
     onoff=!onoff;
     $(this).toggleClass("on");
+    $("#display").toggleClass("on");
     
+    if(!onoff){
+      level = "--";
+      userSequence = [];
+      sequence = [];
+      strict = false;
+      start = false;
+      $("#strict-light").removeClass("on");
+//      $("#display").addClass("on");
+    }
     console.log("onoff",onoff);
   });
 
   $("#count").click(function(){
+    if(!onoff) return;
+    
     strict=!strict;
     $("#strict-light").toggleClass("on");
     
@@ -157,9 +175,13 @@ $(document).ready(function(){
   });
 
   $("#start").click(function(){
+    if(!onoff) return;
+    
     start=!start;
     if(start){
       level=0;
+      userSequence = [];
+      sequence = [];
       game(true);
     } else {
       level = "--";

@@ -3,12 +3,12 @@ var strict=false;
 var start = false;
 var level = "--";
 var sequence = [];
-var usersequence=[];
+var userSequence=[];
 var playTime = true; // user turn
 var usetWaitTimer = 2000; // 2 seconds for each sequence value 2*sequence.length
-var timerctrl;  //handler
+
 var userTimerCtrl;
-var delay=500; // how much time wait to clear colors (1 second)
+var clearColorDelay=800; // how much time wait to clear colors (1 second)
 
 function checkArray(arr1, arr2){
   if (arr1.length !== arr2.length) {
@@ -61,9 +61,12 @@ function showSequence(index, max){
     $("#topright").removeClass("on");
     $("#bottomleft").removeClass("on");
     $("#bottomright").removeClass("on");
+
+    setTimeout(function(){
+      showSequence(index+1, max);
+    },clearColorDelay);
     
-    showSequence(index+1, max);
-  }, delay); 
+  }, clearColorDelay); 
 }
 
 function addData(){
@@ -73,7 +76,9 @@ function addData(){
 }
 
 function game(add){
+  if(!start) return;
   playTime=false;
+  showLevel(level);
   if(add) {
     addData();
   }
@@ -81,6 +86,7 @@ function game(add){
   showSequence(0, sequence.length);
   // user turn
   playTime=true;
+  userSequence=[];
   console.log("ptime",playTime);
 
   //1. create another timer handler to wait for user input
@@ -92,18 +98,32 @@ function game(add){
   // wait for user input
   userTimerCtrl = setTimeout(function(){
     // check if user input is correct
-    if (checkArray(sequence,usersequence)){
+    console.log(JSON.stringify(sequence));
+    console.log(JSON.stringify(userSequence));
+    if (checkArray(sequence,userSequence)){
       // both equal, next level
       alert("good job, next level");
+      level++;
       game(true);// addData, showSequence, waitForInput, checkInput, repeat
     } else {
       // wrong input, show sequence, wait for input
       alert("wrong input");
-      game(false); //NOTaddData, showSeq, wait, check, repeat
+
+      // if strict, re initialize all, start over newSequence
+      var startAgain=false;
+      if(strict){
+        level = "0";
+        userSequence=[];
+        sequence=[];
+        startAgain=true;
+      }
+      
+      game(startAgain); //NOTaddData, showSeq, wait, check, repeat
+
     }
     
   }, usetWaitTimer*(sequence.length+1));
-  //timerctrl = setInterval(addData() ,timer);
+  
 }
 
 
@@ -132,7 +152,8 @@ $(document).ready(function(){
       game(true);
     } else {
       level = "--";
-      timerctrl = clearInterval(timerctrl);
+      
+      userTimerCtrl = clearTimeout(userTimerCtrl);
     }
     showLevel(level);
     
@@ -143,7 +164,6 @@ $(document).ready(function(){
   
   // color buttons on user input
   $("#topleft").mousedown(function(){
-    console.log("topleft clicked");
     if(playTime) {
       $(this).toggleClass("on");
       userSequence.push(0);

@@ -10,6 +10,14 @@ var usetWaitTimer = 2000; // 2 seconds for each sequence value 2*sequence.length
 var userTimerCtrl;
 var clearColorDelay=800; // how much time wait to clear colors (1 second)
 
+
+function playsound(sound){
+  // play sound
+  var a=document.getElementById(sound);
+  a.currentTime=0;
+  a.play();
+}
+
 function checkArray(arr1, arr2){
   if (arr1.length !== arr2.length) {
     return false;
@@ -53,6 +61,9 @@ function showSequence(index, max){
       $("#bottomright").addClass("on");
       break;
   };
+
+  // play sound
+  playsound("audio");
 
   //clear on class
   setTimeout(function(){
@@ -167,6 +178,8 @@ $(document).ready(function(){
     if(playTime) {
       $(this).toggleClass("on");
       userSequence.push(0);
+      //play sound
+      playsound("audio");
     }
   }).mouseup(function(){
     if(playTime) {
@@ -178,6 +191,8 @@ $(document).ready(function(){
     if(playTime) {
       $(this).toggleClass("on");
       userSequence.push(1);
+      //play sound
+      playsound("audio");
     }
   }).mouseup(function(){
     if(playTime) {
@@ -189,6 +204,8 @@ $(document).ready(function(){
     if(playTime) {
       $(this).toggleClass("on");
       userSequence.push(2);
+      //play sound
+      playsound("audio");
     }
   }).mouseup(function(){
     if(playTime) {
@@ -200,6 +217,8 @@ $(document).ready(function(){
     if(playTime) {
       $(this).toggleClass("on");
       userSequence.push(3);
+      //play sound
+      playsound("audio");
     }
   }).mouseup(function(){
     if(playTime) {
